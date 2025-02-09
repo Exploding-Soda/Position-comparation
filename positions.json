@@ -1,0 +1,57 @@
+[
+  {
+    "id": "id_abc123xyz",
+    "positionInfo": "软件工程师",
+    "positionSalaryAfterTax": 12000,
+    "positionRentHouseCost": 2500,
+    "positionTransportationCostsPerDay": 15,
+    "positionTransportationTimePerDay": 30,
+    "postionOnSiteHoursPerDay": 8,
+    "positionWorkDaysPerMonth": 22,
+    "positionTransportationDaysPerMonth": 20
+  },
+  {
+    "id": "id_def456uvw",
+    "positionInfo": "产品经理",
+    "positionSalaryAfterTax": 15000,
+    "positionRentHouseCost": 3200,
+    "positionTransportationCostsPerDay": 20,
+    "positionTransportationTimePerDay": 40,
+    "postionOnSiteHoursPerDay": 9,
+    "positionWorkDaysPerMonth": 21,
+    "positionTransportationDaysPerMonth": 20
+  },
+  {
+    "id": "id_xyz789qwe",
+    "positionInfo": "市场营销",
+    "positionSalaryAfterTax": 10000,
+    "positionRentHouseCost": 2800,
+    "positionTransportationCostsPerDay": 10,
+    "positionTransportationTimePerDay": 45,
+    "postionOnSiteHoursPerDay": 7.5,
+    "positionWorkDaysPerMonth": 20,
+    "positionTransportationDaysPerMonth": 15
+  },
+  {
+    "id": "id_pqr456mno",
+    "positionInfo": "UI 设计师",
+    "positionSalaryAfterTax": 11000,
+    "positionRentHouseCost": 3000,
+    "positionTransportationCostsPerDay": 12,
+    "positionTransportationTimePerDay": 35,
+    "postionOnSiteHoursPerDay": 8,
+    "positionWorkDaysPerMonth": 22,
+    "positionTransportationDaysPerMonth": 18
+  },
+  {
+    "id": "id_lmn123rst",
+    "positionInfo": "后端开发",
+    "positionSalaryAfterTax": 13000,
+    "positionRentHouseCost": 2800,
+    "positionTransportationCostsPerDay": 18,
+    "positionTransportationTimePerDay": 25,
+    "postionOnSiteHoursPerDay": 8.5,
+    "positionWorkDaysPerMonth": 22,
+    "positionTransportationDaysPerMonth": 20
+  }
+]
