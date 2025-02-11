@@ -220,11 +220,19 @@
             <strong>时薪 & 日薪 计算规则</strong>
             <button id="closeTip" class="close-button">&times;</button>
         </div>
+        <a href="https://github.com/Exploding-Soda/Position-comparation" style="text-decoration: underline; color: inherit;">随时保持更新 - GitHub项目地址</a>
         <div class="tip-content">
             <p><strong>时薪计算：</strong></p>
             <p>时薪 = (税后工资 - 每月交通费 - 房租) / 总工作时间（小时）</p>
             <p><strong>日薪计算：</strong></p>
             <p>日薪 = 时薪 × (每天工作时间 + 每日通勤时间 / 60)</p>
+            <p><strong>幸福度计算：</strong></p>
+            <p>根据每月的平均工作时长来计算每个职位的幸福度，幸福度的计算方式考虑了工作占用的时间与收入的关系。</p>
+            <ul>
+                <li><strong>工作占用时间：</strong>工作占用时间包括了每天的工作时长以及通勤时间。平均工作时间越短，幸福度越高。</li>
+                <li><strong>惩罚机制：</strong>当平均工作时长超过 9 小时时，开始惩罚，超过 12 小时时惩罚达到巅峰。惩罚是线性增长的，即每小时的工作时间增加会导致幸福度下降。</li>
+                <li><strong>奖励机制：</strong>当平均工作时长小于 9 小时时，会给予一定的奖励，意味着工作时间越少，幸福度会有所提升。</li>
+            </ul>
             <p><strong>解释：</strong></p>
             <ul>
                 <li><strong>通勤时间：</strong>通勤时间也会占用个人时间，因此需要包括在内。它会加到每个职位的工作时间计算中。</li>
@@ -232,6 +240,7 @@
             </ul>
         </div>
     </div>
+    
     
     <div class="container">
         <form id="positionForm">
