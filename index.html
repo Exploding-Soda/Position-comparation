@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>职位时薪计算器</title>    
+    <style>
+        /* 使用macOS风格配色 */
+        body {
+            font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f7; /* 浅灰背景 */
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1d1d1f;
+            font-size: 24px;
+            margin: 20px;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f5f5f7;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            border-color: #007aff;
+            background-color: #ffffff;
+        }
+
+        button {
+            background-color: #007aff;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f0f0f5;
+            color: #007aff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .truncate {
+            display: inline-block;
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .truncate:hover {
+            white-space: normal;
+            text-overflow: clip;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .action-buttons button {
+            background-color: #4cd964;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .action-buttons button:hover {
+            background-color: #3a9e4f;
+        }
+
+        /* 添加过渡动画 */
+        .fade {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .fade.show {
+            opacity: 1;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+    <style>
+        /* 提示框的基本样式 */
+        .tip-box {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 300px;
+            background-color: #f4f4f4;
+            border: 2px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            z-index: 1000;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            color: #333;
+            display: none; /* 默认隐藏 */
+        }
+
+        /* 提示框的标题栏 */
+        .tip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* 关闭按钮样式 */
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #333;
+        }
+
+        /* 提示框的内容部分 */
+        .tip-content {
+            margin-top: 10px;
+        }
+
+        .tip-content p, .tip-content ul {
+            margin-bottom: 10px;
+        }
+
+        .tip-content ul {
+            padding-left: 20px;
+        }
+
+        /* 显示提示框 */
+        .tip-box.show {
+            display: block;
+        }
+    </style>
+
+    <style>
+        .highlight-row {
+            background-color: #ffe48d !important;  /* 背景色 */
+            border: 0.1px solid black !important;    /* 黑色边框，2px宽 */
+        }
+
+    </style>
+</head>
+<body>
+
+    <h2>职位时薪计算器</h2>
+
+    <div id="tipBox" class="tip-box">
+        <div class="tip-header">
+            <strong>时薪 & 日薪 计算规则</strong>
+            <button id="closeTip" class="close-button">&times;</button>
+        </div>
+        <a href="https://github.com/Exploding-Soda/Position-comparation" style="text-decoration: underline; color: inherit;">随时保持更新 - GitHub项目地址</a>
+        <div class="tip-content">
+            <p><strong>时薪计算：</strong></p>
+            <p>时薪 = (税后工资 - 每月交通费 - 房租) / 总工作时间（小时）</p>
+            <p><strong>日薪计算：</strong></p>
+            <p>日薪 = 时薪 × (每天工作时间 + 每日通勤时间 / 60)</p>
+            <p><strong>幸福度计算：</strong></p>
+            <p>根据每月的平均工作时长来计算每个职位的幸福度，幸福度的计算方式考虑了工作占用的时间与收入的关系。</p>
+            <ul>
+                <li><strong>工作占用时间：</strong>工作占用时间包括了每天的工作时长以及通勤时间。平均工作时间越短，幸福度越高。</li>
+                <li><strong>惩罚机制：</strong>当平均工作时长超过 9 小时时，开始惩罚，超过 12 小时时惩罚达到巅峰。惩罚是线性增长的，即每小时的工作时间增加会导致幸福度下降。</li>
+                <li><strong>奖励机制：</strong>当平均工作时长小于 9 小时时，会给予一定的奖励，意味着工作时间越少，幸福度会有所提升。</li>
+            </ul>
+            <p><strong>解释：</strong></p>
+            <ul>
+                <li><strong>通勤时间：</strong>通勤时间也会占用个人时间，因此需要包括在内。它会加到每个职位的工作时间计算中。</li>
+                <li><strong>房租支出：</strong>有的工作可能需要租房，有的可能不需要，而取决于地区不同租房的价格也会变化，是为了工作而产生的必要支出，因此会从税后收入中扣除。</li>
+            </ul>
+        </div>
+    </div>
+    
+    
+    <div class="container">
+        <form id="positionForm">
+            <!-- 新增字段：公司名称 -->
+            <label for="positionCompany">公司名称：</label>
+            <input type="text" id="positionCompany" required><br><br>
+
+            <label for="positionInfo">岗位信息：</label>
+            <input type="text" id="positionInfo" required><br><br>
+        
+            <label for="positionSalaryAfterTax">税后工资：</label>
+            <input type="number" id="positionSalaryAfterTax" required><br><br>
+        
+            <label for="positionRentHouseCost">房租支出：</label>
+            <input type="number" id="positionRentHouseCost" required><br><br>
+        
+            <label for="positionTransportationCostsPerDay">每日交通费：</label>
+            <input type="number" id="positionTransportationCostsPerDay" required><br><br>
+        
+            <label for="positionTransportationTimePerDay">每日通勤时间（分钟）：</label>
+            <input type="number" id="positionTransportationTimePerDay" required><br><br>
+        
+            <label for="postionOnSiteHoursPerDay">每天工作时间（小时）：</label>
+            <input type="number" id="postionOnSiteHoursPerDay" step="0.01" required><br><br>
+        
+            <label for="positionWorkDaysPerMonth">每月工作天数：</label>
+            <input type="number" id="positionWorkDaysPerMonth" value="20" required><br><br>
+        
+            <label for="positionTransportationDaysPerMonth">每月乘坐交通工具天数：</label>
+            <input type="number" id="positionTransportationDaysPerMonth" value="20" required><br><br>
+        
+            <label for="positonWorkFromHomeDaysPerMonth">每月居家天数：</label>
+            <input type="number" id="positonWorkFromHomeDaysPerMonth" value="0" required><br><br>
+        
+            <button type="submit">添加岗位</button>
+            <button type="button" id="saveEditButton" style="display:none;">保存修改</button>
+        </form>
+        
+
+        <hr>
+
+        <h3>职位列表</h3>
+        <table id="positions-table">
+            <thead>
+                <tr>
+                    <th>公司</th>
+                    <th>岗位信息</th>
+                    <th>税后工资（元）</th>
+                    <th>时薪（元/小时）</th>
+                    <th>日薪（元/天）</th>
+                    <th>每月到手收入（元/月）</th>
+                    <th>平均每天占用（小时）</th>
+                    <th>占时收入幸福度</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 数据将动态插入这里 -->
+            </tbody>
+        </table>
+
+        <br>
+        <button id="exportButton">导出为 JSON</button>
+        <input type="file" id="importFile" style="display:none;">
+        <button id="importButton">导入 JSON</button>
+    </div>
+
+    <script>
+        // 显示提示框的函数
+        function showTipBox() {
+            const tipBox = document.getElementById('tipBox');
+            tipBox.classList.add('show');
+        }
+
+        // 关闭提示框的函数
+        document.getElementById('closeTip').addEventListener('click', function() {
+            const tipBox = document.getElementById('tipBox');
+            tipBox.classList.remove('show');
+        });
+
+        // 在页面加载时显示提示框（可以根据需求修改触发方式）
+        window.onload = function() {
+            showTipBox();
+        };
+
+        // 获取存储的职位数据
+        function getPositions() {
+            const positions = JSON.parse(localStorage.getItem('positions')) || [];
+            return positions;
+        }
+
+        // 将职位数据保存到 localStorage
+        function savePositions(positions) {
+            localStorage.setItem('positions', JSON.stringify(positions));
+        }
+
+        // 生成唯一ID
+        function generateUniqueId() {
+            return 'id_' + Math.random().toString(36).substr(2, 9);  // 生成一个9位的随机字符串作为ID
+        }
+
+        // 计算时薪的函数
+        function calculateHourlyWage(position) {
+            // 实际收入 = 税后工资 - 每月交通费 - 房租
+            const actualIncome = position.positionSalaryAfterTax 
+                                 - (position.positionTransportationCostsPerDay * position.positionTransportationDaysPerMonth) 
+                                 - position.positionRentHouseCost;
+
+            // 每月总工作时间 = （每天的通勤时间 / 60 + 每天的工作时间） * 每月工作天数
+            const totalWorkHoursPerMonth = (position.positionTransportationTimePerDay / 60 + position.postionOnSiteHoursPerDay) 
+                                            * position.positionWorkDaysPerMonth;
+
+            // 计算时薪
+            return actualIncome / totalWorkHoursPerMonth;
+        }
+
+        // 计算日薪的函数
+        // 计算日薪的函数（修改后）
+        function calculateDailyWage(position) {
+            const hourlyWage = calculateHourlyWage(position);
+
+            // 计算日薪：时薪 * (每天工作时间 + 每日通勤时间（分钟） / 60)
+            const totalWorkHoursPerDay = position.postionOnSiteHoursPerDay + (position.positionTransportationTimePerDay / 60);
+            return hourlyWage * totalWorkHoursPerDay;
+        }
+
+        // 渲染岗位列表
+        function renderPositions() {
+            const positions = getPositions();
+            const tableBody = document.getElementById('positions-table').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = '';  // 清空表格
+
+            // 按时薪降序排序
+            positions.sort((a, b) => {
+                // 排序标准 1：每月到手收入（降序）
+                const monthlyIncomeA = a.positionWorkDaysPerMonth * calculateDailyWage(a);
+                const monthlyIncomeB = b.positionWorkDaysPerMonth * calculateDailyWage(b);
+                if (monthlyIncomeB !== monthlyIncomeA) {
+                    return monthlyIncomeB - monthlyIncomeA;  // 降序
+                }
+
+                // 排序标准 2：税后工资（降序）
+                if (b.positionSalaryAfterTax !== a.positionSalaryAfterTax) {
+                    return b.positionSalaryAfterTax - a.positionSalaryAfterTax;  // 降序
+                }
+
+                // 排序标准 3：平均每天占用时间（升序）
+                const averageOccupiedTimeA = (a.postionOnSiteHoursPerDay * a.positionWorkDaysPerMonth + a.positionTransportationTimePerDay * a.positionTransportationDaysPerMonth) / a.positionWorkDaysPerMonth;
+                const averageOccupiedTimeB = (b.postionOnSiteHoursPerDay * b.positionWorkDaysPerMonth + b.positionTransportationTimePerDay * b.positionTransportationDaysPerMonth) / b.positionWorkDaysPerMonth;
+                return averageOccupiedTimeA - averageOccupiedTimeB;  // 升序
+            });
+
+            positions.forEach((position) => {
+                const truncatedPositionInfo = position.positionInfo.length > 20 ? 
+                    position.positionInfo.slice(0, 20) + "..." : position.positionInfo;
+
+                const hourlyWage = calculateHourlyWage(position);
+                const dailyWage = calculateDailyWage(position);
+                const monthlyIncome = position.positionWorkDaysPerMonth * dailyWage;  // 每月到手收入
+
+                // 计算居家办公和到公司工作的占用时间
+                const workFromHomeDays = position.positonWorkFromHomeDaysPerMonth;
+                const onSiteWorkDays = position.positionWorkDaysPerMonth - workFromHomeDays;
+
+                // 计算居家办公的占用时间
+                const workFromHomeOccupiedTime = workFromHomeDays * position.postionOnSiteHoursPerDay;
+                // 计算到公司工作的占用时间（包括通勤时间）
+                const onSiteOccupiedTime = onSiteWorkDays * (position.postionOnSiteHoursPerDay + (position.positionTransportationTimePerDay / 60));
+
+                // 总占用时间 = 居家办公的占用时间 + 到公司工作的占用时间
+                const totalOccupiedTime = workFromHomeOccupiedTime + onSiteOccupiedTime;
+
+                // 计算平均占用时间
+                const averageOccupiedTime = totalOccupiedTime / position.positionWorkDaysPerMonth;
+
+                // 设置参数
+                const scalingFactor = 600;  // 惩罚的强度，数值越小惩罚越强
+
+                // 计算幸福度
+                let happinessFactor;
+                
+                // 计算惩罚因子
+                let penalty = 0;
+
+                if (averageOccupiedTime > 9 && averageOccupiedTime <= 10) {
+                    penalty = (averageOccupiedTime - 9) * 0.25;  // 9-10小时之间的惩罚
+                } else if (averageOccupiedTime > 10 && averageOccupiedTime <= 11) {
+                    penalty = (averageOccupiedTime - 10) * 0.1 + 0.25;  // 10-11小时之间的惩罚
+                } else if (averageOccupiedTime > 11 && averageOccupiedTime <= 12) {
+                    penalty = (averageOccupiedTime - 11) * 0.35 + 0.25;  // 11-12小时之间的惩罚
+                }
+
+                happinessFactor = Math.max(0, (monthlyIncome / 10000) * (1 - penalty));  // 确保幸福度不低于0
+
+                const happinessFactorFormatted = happinessFactor.toFixed(2);  // 保留两位小数
+                const workFromHomeTooltip = workFromHomeDays > 0 ? `该岗位能够居家办公 ${workFromHomeDays} 天` : '';
+
+                const row = tableBody.insertRow();
+                row.innerHTML = `
+                    <td>${position.positionCompany}</td>  <!-- 公司名称 -->
+                    <td class="truncate" title="${position.positionInfo}">${truncatedPositionInfo}</td>
+                    <td>${position.positionSalaryAfterTax}</td>
+                    <td>${hourlyWage.toFixed(2)}</td>
+                    <td>${dailyWage.toFixed(2)}</td>
+                    <td>${monthlyIncome.toFixed(2)}</td>  <!-- 每月到手收入 -->
+                    <td>${isNaN(averageOccupiedTime) ? 'N/A' : averageOccupiedTime.toFixed(2)} </td>  <!-- 平均每天占用 -->
+                    <td>${happinessFactorFormatted}</td>  <!-- 占时收入幸福度 -->
+                    <td class="action-buttons">
+                        <button onclick="editPosition('${position.id}')">编辑</button>
+                        <button onclick="copyPosition('${position.id}')">复制</button>
+                        <button onclick="deletePosition('${position.id}')">删除</button>
+                    </td>
+                `;
+
+                // 获取当前行的公司名称
+                const companyName = position.positionCompany;
+                
+                // 为当前行添加鼠标悬浮高亮功能
+                row.addEventListener('mouseover', () => {
+                    row.classList.add('highlight-row');  // 高亮当前行
+                    // 高亮所有公司名称相同的行
+                    const rows = tableBody.getElementsByTagName('tr');
+                    for (let r of rows) {
+                        if (r.cells[0].textContent === companyName) {  // 比较“公司名称”列
+                            r.classList.add('highlight-row');  // 高亮相同公司名称的行
+                        }
+                    }
+                });
+
+                // 当鼠标离开时取消高亮
+                row.addEventListener('mouseout', () => {
+                    row.classList.remove('highlight-row');
+                    const rows = tableBody.getElementsByTagName('tr');
+                    for (let r of rows) {
+                        if (r.cells[0].textContent === companyName) {
+                            r.classList.remove('highlight-row');
+                        }
+                    }
+                });
+            });
+        }
+
+
+
+        // 添加岗位到 localStorage
+        document.getElementById('positionForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const position = {
+                id: generateUniqueId(),
+                positionInfo: document.getElementById('positionInfo').value,
+                positionSalaryAfterTax: parseFloat(document.getElementById('positionSalaryAfterTax').value),
+                positionRentHouseCost: parseFloat(document.getElementById('positionRentHouseCost').value),
+                positionTransportationCostsPerDay: parseFloat(document.getElementById('positionTransportationCostsPerDay').value),
+                positionTransportationTimePerDay: parseInt(document.getElementById('positionTransportationTimePerDay').value),
+                postionOnSiteHoursPerDay: parseFloat(document.getElementById('postionOnSiteHoursPerDay').value),
+                positionWorkDaysPerMonth: parseInt(document.getElementById('positionWorkDaysPerMonth').value),
+                positionTransportationDaysPerMonth: parseInt(document.getElementById('positionTransportationDaysPerMonth').value),
+                positonWorkFromHomeDaysPerMonth: parseInt(document.getElementById('positonWorkFromHomeDaysPerMonth').value),
+                positionCompany: document.getElementById('positionCompany').value  // 新增字段
+            };
+
+            const positions = getPositions();
+            positions.push(position);
+            savePositions(positions);
+
+            renderPositions();  // 更新表格
+            document.getElementById('positionForm').reset();  // 清空表单
+        });
+
+        // 编辑岗位功能
+        function editPosition(id) {
+            const positions = getPositions();
+            const position = positions.find(p => p.id === id);
+
+            // 填充表单字段
+            document.getElementById('positionInfo').value = position.positionInfo;
+            document.getElementById('positionSalaryAfterTax').value = position.positionSalaryAfterTax;
+            document.getElementById('positionRentHouseCost').value = position.positionRentHouseCost;
+            document.getElementById('positionTransportationCostsPerDay').value = position.positionTransportationCostsPerDay;
+            document.getElementById('positionTransportationTimePerDay').value = position.positionTransportationTimePerDay;
+            document.getElementById('postionOnSiteHoursPerDay').value = position.postionOnSiteHoursPerDay;
+            document.getElementById('positionWorkDaysPerMonth').value = position.positionWorkDaysPerMonth;
+            document.getElementById('positionTransportationDaysPerMonth').value = position.positionTransportationDaysPerMonth;
+            document.getElementById('positonWorkFromHomeDaysPerMonth').value = position.positonWorkFromHomeDaysPerMonth;
+            document.getElementById('positionCompany').value = position.positionCompany;
+
+            // 显示保存修改按钮，隐藏添加按钮
+            document.querySelector('button[type="submit"]').style.display = 'none';
+            document.getElementById('saveEditButton').style.display = 'inline';
+
+            // 保存修改的功能
+            document.getElementById('saveEditButton').onclick = function() {
+                // 更新修改后的数据
+                positions.forEach(p => {
+                    if (p.id === id) {
+                        p.positionInfo = document.getElementById('positionInfo').value;
+                        p.positionSalaryAfterTax = parseFloat(document.getElementById('positionSalaryAfterTax').value);
+                        p.positionRentHouseCost = parseFloat(document.getElementById('positionRentHouseCost').value);
+                        p.positionTransportationCostsPerDay = parseFloat(document.getElementById('positionTransportationCostsPerDay').value);
+                        p.positionTransportationTimePerDay = parseInt(document.getElementById('positionTransportationTimePerDay').value);
+                        p.postionOnSiteHoursPerDay = parseFloat(document.getElementById('postionOnSiteHoursPerDay').value);
+                        p.positionWorkDaysPerMonth = parseInt(document.getElementById('positionWorkDaysPerMonth').value);
+                        p.positionTransportationDaysPerMonth = parseInt(document.getElementById('positionTransportationDaysPerMonth').value);
+                        p.positonWorkFromHomeDaysPerMonth = parseInt(document.getElementById('positonWorkFromHomeDaysPerMonth').value);
+                        p.positionCompany = document.getElementById('positionCompany').value
+                    }
+                });
+
+                savePositions(positions);
+                renderPositions();  // 更新表格
+                document.getElementById('saveEditButton').style.display = 'none';
+                document.querySelector('button[type="submit"]').style.display = 'inline';
+            };
+        }
+
+        // 复制岗位功能
+        function copyPosition(id) {
+            const positions = getPositions();
+            const positionToCopy = { ...positions.find(p => p.id === id) };
+            positionToCopy.id = generateUniqueId();  // 复制时生成新的ID
+            positionToCopy.positionInfo += ' - 副本';
+            positionToCopy.positonWorkFromHomeDaysPerMonth = positionToCopy.positonWorkFromHomeDaysPerMonth;
+
+            positions.push(positionToCopy);
+            savePositions(positions);
+            renderPositions();
+        }
+
+        // 删除岗位功能
+        function deletePosition(id) {
+            const positions = getPositions();
+            const updatedPositions = positions.filter(p => p.id !== id);  // 通过ID删除对应的岗位
+            savePositions(updatedPositions);
+            renderPositions();  // 刷新表格
+        }
+
+        // 导出职位数据为 JSON 文件
+        document.getElementById('exportButton').addEventListener('click', function() {
+            const positions = getPositions();
+            const jsonBlob = new Blob([JSON.stringify(positions, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(jsonBlob);
+            link.download = 'positions.json';
+            link.click();
+        });
+
+        // 导入职位数据从 JSON 文件
+        document.getElementById('importButton').addEventListener('click', function() {
+            document.getElementById('importFile').click();
+        });
+
+        document.getElementById('importFile').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file && file.type === 'application/json') {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const importedPositions = JSON.parse(e.target.result);
+                    savePositions(importedPositions);
+                    renderPositions();
+                };
+                reader.readAsText(file);
+            } else {
+                alert('请选择一个有效的 JSON 文件');
+            }
+        });
+
+        // 初始化页面，加载职位数据
+        renderPositions();
+    </script>
+
+</body>
+</html>
