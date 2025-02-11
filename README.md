@@ -10,4 +10,4 @@
 增加一列“占时收入幸福度”，会根据 到手收入 和 工作平均每天占用的时间 来大致计算每份工作可能带给你的幸福度,
 一天固定被占用超过9小时20开始引入惩罚因子，幸福度开始下降
 此后当超过10小时、11小时时候再次更激烈地惩罚幸福度，并在工作时长达到12小时时到达巅峰。
-![image](https://github.com/user-attachments/assets/4a200396-4697-4870-b735-a992ffe4bca9)
+![image](https://github.com/user-attachments/assets/818aa4ec-d987-4024-83be-685eb0d7b159)
