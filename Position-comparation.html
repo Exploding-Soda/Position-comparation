@@ -220,6 +220,11 @@
         .red {
             color: red;
         }
+
+        .black {
+            color: black;
+        }
+
         .home-icon {
             color: green;
             cursor: pointer;
@@ -466,11 +471,13 @@
                 // 判断平均占用时间，并根据值设置颜色
                 let averageOccupiedTimeClass = '';
                 if (averageOccupiedTime < 9) {
-                    averageOccupiedTimeClass = 'green';
-                } else if (averageOccupiedTime >= 9 && averageOccupiedTime < 10) {
-                    averageOccupiedTimeClass = 'orange';
+                    averageOccupiedTimeClass = 'green'; // 9以下，绿色
+                } else if (averageOccupiedTime >= 9 && averageOccupiedTime < 9.5) {
+                    averageOccupiedTimeClass = 'black'; // 9到9.5之间，黑色
+                } else if (averageOccupiedTime >= 9.5 && averageOccupiedTime < 10) {
+                    averageOccupiedTimeClass = 'orange'; // 9.5到10之间，橙色
                 } else {
-                    averageOccupiedTimeClass = 'red';
+                    averageOccupiedTimeClass = 'red'; // 10以上，红色
                 }
 
                 // 计算每周居家办公的天数
