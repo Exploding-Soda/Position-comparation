@@ -12,3 +12,6 @@ https://position-comparation.pages.dev/
 一天固定被占用超过9小时20开始引入惩罚因子，幸福度开始下降
 此后当超过10小时、11小时时候再次更激烈地惩罚幸福度，并在工作时长达到12小时时到达巅峰。
 ![image](https://github.com/user-attachments/assets/818aa4ec-d987-4024-83be-685eb0d7b159)
+鼠标悬浮在同一公司名的项时，这个公司的岗位都会被高亮
+当岗位有提供混合工作或纯线上的时候 “平均每天占用” 列可以显示
+![image](https://github.com/user-attachments/assets/38f54069-c664-453d-9843-602a3c5c8dd2)
