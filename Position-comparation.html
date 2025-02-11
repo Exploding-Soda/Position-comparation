@@ -312,6 +312,7 @@
 
         <h3>职位列表</h3>
         <table id="positions-table">
+            <input id="currentHappiness" type="number" placeholder="当前职位幸福度（输入数字）">
             <thead>
                 <tr>
                     <th>公司</th>
@@ -337,6 +338,14 @@
     </div>
 
     <script>
+        // 获取当前幸福度输入框
+        const currentHappinessInput = document.getElementById('currentHappiness');
+
+        // 在输入框变化时重新渲染岗位列表
+        currentHappinessInput.addEventListener('input', () => {
+            renderPositions();  // 重新渲染岗位
+        });
+
         // 显示提示框的函数
         function showTipBox() {
             const tipBox = document.getElementById('tipBox');
@@ -401,6 +410,9 @@
             const tableBody = document.getElementById('positions-table').getElementsByTagName('tbody')[0];
             tableBody.innerHTML = '';  // 清空表格
 
+            // 获取当前的幸福度值
+            const currentHappinessValue = parseFloat(currentHappinessInput.value) || 0;  // 默认0
+
             // 按时薪降序排序
             positions.sort((a, b) => {
                 // 排序标准 1：每月到手收入（降序）
@@ -409,16 +421,6 @@
                 if (monthlyIncomeB !== monthlyIncomeA) {
                     return monthlyIncomeB - monthlyIncomeA;  // 降序
                 }
-
-                // 排序标准 2：税后工资（降序）
-                if (b.positionSalaryAfterTax !== a.positionSalaryAfterTax) {
-                    return b.positionSalaryAfterTax - a.positionSalaryAfterTax;  // 降序
-                }
-
-                // 排序标准 3：平均每天占用时间（升序）
-                const averageOccupiedTimeA = (a.postionOnSiteHoursPerDay * a.positionWorkDaysPerMonth + a.positionTransportationTimePerDay * a.positionTransportationDaysPerMonth) / a.positionWorkDaysPerMonth;
-                const averageOccupiedTimeB = (b.postionOnSiteHoursPerDay * b.positionWorkDaysPerMonth + b.positionTransportationTimePerDay * b.positionTransportationDaysPerMonth) / b.positionWorkDaysPerMonth;
-                return averageOccupiedTimeA - averageOccupiedTimeB;  // 升序
             });
 
             positions.forEach((position) => {
@@ -488,6 +490,18 @@
                 const workFromHomeIcon = (workFromHomeDays !== onSiteWorkDays && workFromHomePerWeek > 0) ? 
                     `<span class="home-icon" title="该岗位每周大约可居家办公 ${workFromHomePerWeek} 天">!</span>` : '';
 
+                // 检查幸福度，并根据当前幸福度输入框的值为幸福度列设置颜色
+                let happinessClass = '';
+                if(currentHappinessValue == 0){
+                    happinessClass = 'black'; // 如果幸福度等于输入值，标黑
+                }else if (happinessFactorFormatted < currentHappinessValue) {
+                    happinessClass = 'red'; // 如果幸福度低于输入值，标红
+                } else if (happinessFactorFormatted > currentHappinessValue) {
+                    happinessClass = 'green'; // 如果幸福度高于输入值，标绿
+                } else if(happinessFactorFormatted == currentHappinessValue){
+                    happinessClass = 'black'; // 如果幸福度等于输入值，标黑
+                }
+
                 row.innerHTML = `
                     <td>${position.positionCompany}</td>  <!-- 公司名称 -->
                     <td class="truncate" title="${position.positionInfo}">${truncatedPositionInfo}</td>
@@ -496,7 +510,7 @@
                     <td>${dailyWage.toFixed(2)}</td>
                     <td>${monthlyIncome.toFixed(2)}</td>  <!-- 每月到手收入 -->
                     <td class="${averageOccupiedTimeClass}">${isNaN(averageOccupiedTime) ? 'N/A' : averageOccupiedTime.toFixed(2)} ${workFromHomeIcon}</td>  <!-- 平均每天占用 -->
-                    <td>${happinessFactorFormatted}</td>  <!-- 占时收入幸福度 -->
+                    <td class="${happinessClass}">${happinessFactorFormatted}</td>  <!-- 占时收入幸福度 -->
                     <td class="action-buttons">
                         <button onclick="editPosition('${position.id}')">编辑</button>
                         <button onclick="copyPosition('${position.id}')">复制</button>
@@ -531,7 +545,6 @@
                 });
             });
         }
-
 
 
         // 添加岗位到 localStorage
