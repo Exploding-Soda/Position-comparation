@@ -209,6 +209,29 @@
             border: 0.1px solid black !important;    /* 黑色边框，2px宽 */
         }
 
+        .green {
+            color: green;
+        }
+
+        .orange {
+            color: orange;
+        }
+
+        .red {
+            color: red;
+        }
+        .home-icon {
+            color: green;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .home-icon:hover {
+            color: green;
+            text-decoration: underline;
+        }
+
     </style>
 </head>
 <body>
@@ -439,6 +462,25 @@
                 const workFromHomeTooltip = workFromHomeDays > 0 ? `该岗位能够居家办公 ${workFromHomeDays} 天` : '';
 
                 const row = tableBody.insertRow();
+                
+                // 判断平均占用时间，并根据值设置颜色
+                let averageOccupiedTimeClass = '';
+                if (averageOccupiedTime < 9) {
+                    averageOccupiedTimeClass = 'green';
+                } else if (averageOccupiedTime >= 9 && averageOccupiedTime < 10) {
+                    averageOccupiedTimeClass = 'orange';
+                } else {
+                    averageOccupiedTimeClass = 'red';
+                }
+
+                // 计算每周居家办公的天数
+                let workFromHomePerWeek = (workFromHomeDays / position.positionWorkDaysPerMonth) * 5;
+                workFromHomePerWeek = workFromHomePerWeek.toFixed(1);  // 保留1位小数
+
+                // 如果居家天数与工作天数不一致，显示感叹号并添加提示
+                const workFromHomeIcon = (workFromHomeDays !== onSiteWorkDays && workFromHomePerWeek > 0) ? 
+                    `<span class="home-icon" title="该岗位每周大约可居家办公 ${workFromHomePerWeek} 天">!</span>` : '';
+
                 row.innerHTML = `
                     <td>${position.positionCompany}</td>  <!-- 公司名称 -->
                     <td class="truncate" title="${position.positionInfo}">${truncatedPositionInfo}</td>
@@ -446,7 +488,7 @@
                     <td>${hourlyWage.toFixed(2)}</td>
                     <td>${dailyWage.toFixed(2)}</td>
                     <td>${monthlyIncome.toFixed(2)}</td>  <!-- 每月到手收入 -->
-                    <td>${isNaN(averageOccupiedTime) ? 'N/A' : averageOccupiedTime.toFixed(2)} </td>  <!-- 平均每天占用 -->
+                    <td class="${averageOccupiedTimeClass}">${isNaN(averageOccupiedTime) ? 'N/A' : averageOccupiedTime.toFixed(2)} ${workFromHomeIcon}</td>  <!-- 平均每天占用 -->
                     <td>${happinessFactorFormatted}</td>  <!-- 占时收入幸福度 -->
                     <td class="action-buttons">
                         <button onclick="editPosition('${position.id}')">编辑</button>
