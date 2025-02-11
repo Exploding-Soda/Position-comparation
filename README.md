@@ -15,3 +15,5 @@ https://position-comparation.pages.dev/
 鼠标悬浮在同一公司名的项时，这个公司的岗位都会被高亮
 当岗位有提供混合工作或纯线上的时候 “平均每天占用” 列可以显示
 ![image](https://github.com/user-attachments/assets/38f54069-c664-453d-9843-602a3c5c8dd2)
+可以输入自己目前岗位的幸福度，方便让系统给出推荐，输入后低于目前幸福度的岗位幸福度列为红，高于目前幸福度则为绿
+![image](https://github.com/user-attachments/assets/02740b06-b8ff-4fec-85ca-9d774ef1490c)
