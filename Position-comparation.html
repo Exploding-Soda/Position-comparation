@@ -236,6 +236,74 @@
             color: green;
             text-decoration: underline;
         }
+        .assumed-row {
+            font-size: 0.9em;
+            color: #888;  /* 设置文字为灰色 */
+            opacity: 0.8;  /* 使行稍微透明 */
+        }
+    </style>
+    <style>
+        /* 右上设置框 */
+        /* 设置框样式 */
+        .settings-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 250px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            z-index: 1000;
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* 设置框头部 */
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        /* 最小化按钮 */
+        .toggle-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* 设置框内容 */
+        .settings-content {
+            margin-top: 10px;
+        }
+
+        /* 最小化状态下的设置框 */
+        .settings-box.minimized {
+            width: 50px;
+            height: 50px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .settings-box.minimized .settings-content {
+            display: none; /* 隐藏内容 */
+        }
+
+        .settings-box.minimized .settings-header span {
+            display: none; /* 隐藏标题文字 */
+        }
+
+        .settings-box.minimized .toggle-btn {
+            transform: rotate(180deg); /* 翻转按钮 */
+        }
+
+        /* 为checkbox设置样式 */
+        #comparisonModeCheckbox {
+            margin-left: 10px;
+        }
 
     </style>
 </head>
@@ -313,6 +381,20 @@
         <h3>职位列表</h3>
         <table id="positions-table">
             <input id="currentHappiness" type="number" placeholder="当前职位幸福度（输入数字）">
+            <!-- 设置框 -->
+            <div id="settingsBox" class="settings-box">
+                <div class="settings-header">
+                    <span>设置</span>
+                    <button id="toggleSettingsBtn" class="toggle-btn">-</button>
+                </div>
+                <div id="settingsContent" class="settings-content">
+                    <label for="comparisonModeCheckbox">
+                        假设房租上涨100-1000的情况
+                        <input type="checkbox" id="comparisonModeCheckbox" />
+                    </label>
+                </div>
+            </div>
+
             <thead>
                 <tr>
                     <th>公司</th>
@@ -323,6 +405,8 @@
                     <th>每月到手收入（元/月）</th>
                     <th>平均每天占用（小时）</th>
                     <th>占时收入幸福度</th>
+                    <th>房租(元)</th>
+                    <th>通勤(分)</th>
                     <th>操作</th>
                 </tr>
             </thead>
@@ -338,6 +422,66 @@
     </div>
 
     <script>
+        // 右上设置框
+        if(1){
+            // 获取元素
+            const toggleSettingsBtn = document.getElementById('toggleSettingsBtn');
+            const settingsBox = document.getElementById('settingsBox');
+            const settingsContent = document.getElementById('settingsContent');
+            const comparisonModeCheckbox = document.getElementById('comparisonModeCheckbox');
+
+            // 初始化：如果 localStorage 存储了上次的比较模式，设置 checkbox 状态
+            const savedMode = localStorage.getItem('positionComparationMode');
+            if (savedMode === '1') {
+                comparisonModeCheckbox.checked = true;
+            } else {
+                comparisonModeCheckbox.checked = false;
+            }
+
+            // 监听 checkbox 变化
+            comparisonModeCheckbox.addEventListener('change', () => {
+                if (comparisonModeCheckbox.checked) {
+                    localStorage.setItem('positionComparationMode', '1');
+                } else {
+                    localStorage.setItem('positionComparationMode', '0');
+                }
+                renderPositions(); // 重新渲染职位列表
+            });
+
+            // 切换最小化/恢复状态
+            toggleSettingsBtn.addEventListener('click', () => {
+                settingsBox.classList.toggle('minimized'); // 切换最小化类
+            });
+        }
+        // 设置框 - 假定房价
+        if(1){
+            // 在假定房价checkbox变化的时候重新render
+            // 获取 checkbox 元素
+            const comparisonModeCheckbox = document.getElementById('comparisonModeCheckbox');
+
+            // 检查 localStorage 中是否有已保存的 positionComparationMode 值
+            const savedMode = localStorage.getItem('positionComparationMode');
+
+            // 初始化 checkbox 状态，根据保存的值设定
+            if (savedMode === '1') {
+                comparisonModeCheckbox.checked = true;
+            } else {
+                comparisonModeCheckbox.checked = false;
+            }
+
+            // 监听 checkbox 状态变化，更新 localStorage
+            comparisonModeCheckbox.addEventListener('change', () => {
+                if (comparisonModeCheckbox.checked) {
+                    localStorage.setItem('positionComparationMode', '1');  // 启用房租比较模式
+                } else {
+                    localStorage.setItem('positionComparationMode', '0');  // 禁用房租比较模式
+                }
+
+                // 重新渲染职位列表
+                renderPositions();
+            });
+        }
+
         // 获取当前幸福度输入框
         const currentHappinessInput = document.getElementById('currentHappiness');
 
@@ -410,6 +554,9 @@
             const tableBody = document.getElementById('positions-table').getElementsByTagName('tbody')[0];
             tableBody.innerHTML = '';  // 清空表格
 
+            // 获取 positionComparationMode 的值，默认为0
+            const positionComparationMode = localStorage.getItem('positionComparationMode') || 0;
+
             // 获取当前的幸福度值
             const currentHappinessValue = parseFloat(currentHappinessInput.value) || 0;  // 默认0
 
@@ -468,6 +615,7 @@
                 const happinessFactorFormatted = happinessFactor.toFixed(2);  // 保留两位小数
                 const workFromHomeTooltip = workFromHomeDays > 0 ? `该岗位能够居家办公 ${workFromHomeDays} 天` : '';
 
+                // 渲染职位的原始行
                 const row = tableBody.insertRow();
                 
                 // 判断平均占用时间，并根据值设置颜色
@@ -511,6 +659,8 @@
                     <td>${monthlyIncome.toFixed(2)}</td>  <!-- 每月到手收入 -->
                     <td class="${averageOccupiedTimeClass}">${isNaN(averageOccupiedTime) ? 'N/A' : averageOccupiedTime.toFixed(2)} ${workFromHomeIcon}</td>  <!-- 平均每天占用 -->
                     <td class="${happinessClass}">${happinessFactorFormatted}</td>  <!-- 占时收入幸福度 -->
+                    <td>${position.positionRentHouseCost}</td>  <!-- 房租 -->
+                    <td>${position.positionTransportationTimePerDay}</td>  <!-- 通勤 -->
                     <td class="action-buttons">
                         <button onclick="editPosition('${position.id}')">编辑</button>
                         <button onclick="copyPosition('${position.id}')">复制</button>
@@ -518,16 +668,76 @@
                     </td>
                 `;
 
-                // 获取当前行的公司名称
-                const companyName = position.positionCompany;
-                
+                // 如果 positionComparationMode 为 1，额外渲染假定的行
+                if (positionComparationMode == 1) {
+                    for (let i = 1; i <= 10; i++) {
+                        const assumedRow = tableBody.insertRow();
+                        const increasedRentCost = position.positionRentHouseCost + i * 100;
+
+                        // 重新计算实际收入，假设房租增加
+                        const assumedActualIncome = position.positionSalaryAfterTax 
+                                                    - (position.positionTransportationCostsPerDay * position.positionTransportationDaysPerMonth) 
+                                                    - increasedRentCost;
+
+                        // 重新计算每月总工作时间
+                        const assumedTotalWorkHoursPerMonth = (position.positionTransportationTimePerDay / 60 + position.postionOnSiteHoursPerDay) 
+                                                            * position.positionWorkDaysPerMonth;
+
+                        // 重新计算时薪
+                        const assumedHourlyWage = assumedActualIncome / assumedTotalWorkHoursPerMonth;
+
+                        // 重新计算日薪
+                        const assumedDailyWage = assumedHourlyWage * (position.postionOnSiteHoursPerDay + (position.positionTransportationTimePerDay / 60));
+
+                        // 重新计算每月到手收入
+                        const assumedMonthlyIncome = position.positionWorkDaysPerMonth * assumedDailyWage;
+
+                        // 重新计算幸福度
+                        let assumedHappinessFactor;
+                        let assumedPenalty = 0;
+
+                        if (averageOccupiedTime > 9 && averageOccupiedTime <= 10) {
+                            assumedPenalty = (averageOccupiedTime - 9) * 0.25;
+                        } else if (averageOccupiedTime > 10 && averageOccupiedTime <= 11) {
+                            assumedPenalty = (averageOccupiedTime - 10) * 0.1 + 0.25;
+                        } else if (averageOccupiedTime > 11 && averageOccupiedTime <= 12) {
+                            assumedPenalty = (averageOccupiedTime - 11) * 0.35 + 0.25;
+                        }
+
+                        assumedHappinessFactor = Math.max(0, (assumedMonthlyIncome / 10000) * (1 - assumedPenalty));  // 确保幸福度不低于0
+
+                        const assumedHappinessFactorFormatted = assumedHappinessFactor.toFixed(2);  // 保留两位小数
+
+                        assumedRow.innerHTML = `
+                            <td>${position.positionCompany}</td>
+                            <td class="truncate" title="${position.positionInfo}">${truncatedPositionInfo}</td>
+                            <td>${position.positionSalaryAfterTax}</td>
+                            <td>${assumedHourlyWage.toFixed(2)}</td>
+                            <td>${assumedDailyWage.toFixed(2)}</td>
+                            <td>${assumedMonthlyIncome.toFixed(2)}</td>  <!-- 每月到手收入 -->
+                            <td class="${averageOccupiedTimeClass}">${isNaN(averageOccupiedTime) ? 'N/A' : averageOccupiedTime.toFixed(2)} ${workFromHomeIcon}</td>
+                            <td class="${happinessClass}">${assumedHappinessFactorFormatted}</td>  <!-- 假定幸福度 -->
+                            <td>${increasedRentCost}</td>  <!-- 增加房租 -->
+                            <td>${position.positionTransportationTimePerDay}</td>  <!-- 通勤 -->
+                            <td class="action-buttons">
+                                <button onclick="editPosition('${position.id}')">编辑</button>
+                                <button onclick="copyPosition('${position.id}')">复制</button>
+                                <button onclick="deletePosition('${position.id}')">删除</button>
+                            </td>
+                        `;
+
+                        assumedRow.classList.add('assumed-row');  // 为假定行添加类
+                    }
+                }
+
+
                 // 为当前行添加鼠标悬浮高亮功能
+                const companyName = position.positionCompany;
                 row.addEventListener('mouseover', () => {
                     row.classList.add('highlight-row');  // 高亮当前行
-                    // 高亮所有公司名称相同的行
                     const rows = tableBody.getElementsByTagName('tr');
                     for (let r of rows) {
-                        if (r.cells[0].textContent === companyName) {  // 比较“公司名称”列
+                        if (r.cells[0].textContent === companyName) {
                             r.classList.add('highlight-row');  // 高亮相同公司名称的行
                         }
                     }
