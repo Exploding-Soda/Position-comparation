@@ -23,3 +23,5 @@ https://position-comparation.pages.dev/
 增加一个假设房租上涨的工具，因为在积极寻找工作的时候有的时候并不确定陌生地区的房价、这有助于快速参考当房价变化时的幸福度
 增加“房租”，“通勤时间”列
 ![update](https://github.com/user-attachments/assets/28321495-abb4-4d93-8946-b8e75e900bb1)
+增加批量更改房租、因为大多数时候一家公司的不同岗位租房参考往往一样
+![image](https://github.com/user-attachments/assets/8d87b4b3-e1b4-4b7d-8301-b0b38809429b)
