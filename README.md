@@ -17,3 +17,9 @@ https://position-comparation.pages.dev/
 ![image](https://github.com/user-attachments/assets/38f54069-c664-453d-9843-602a3c5c8dd2)
 可以输入自己目前岗位的幸福度，方便让系统给出推荐，输入后低于目前幸福度的岗位幸福度列为红，高于目前幸福度则为绿
 ![image](https://github.com/user-attachments/assets/02740b06-b8ff-4fec-85ca-9d774ef1490c)
+
+2025/02/12 更新
+右上增加了一个固定的工具栏 点击右上角可以折叠
+增加一个假设房租上涨的工具，因为在积极寻找工作的时候有的时候并不确定陌生地区的房价、这有助于快速参考当房价变化时的幸福度
+增加“房租”，“通勤时间”列
+![update](https://github.com/user-attachments/assets/28321495-abb4-4d93-8946-b8e75e900bb1)
