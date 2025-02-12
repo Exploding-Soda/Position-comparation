@@ -305,6 +305,67 @@
             margin-left: 10px;
         }
 
+        /* 设置框样式 */
+        .settings-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 250px; /* 设置框宽度 */
+            border: 1px solid #ddd;
+            background-color: #fff;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 设置框头部 */
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .settings-header span {
+            font-weight: bold;
+        }
+
+        /* 设置框内容 */
+        .settings-content {
+            margin-top: 10px;
+        }
+
+        /* 输入框样式 */
+        #companyNameInput, #newRentInput {
+            width: 100%; /* 让输入框占满设置框的宽度 */
+            padding: 6px;
+            margin: 5px 0 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* 防止 padding 导致宽度超出 */
+        }
+
+        /* 更新按钮样式 */
+        #updateRentBtn {
+            width: 100%; /* 让按钮和输入框宽度一致 */
+            padding: 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #updateRentBtn:hover {
+            background-color: #45a049;
+        }
+
+        /* 横线样式 */
+        hr {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border: 0;
+            border-top: 1px solid #ddd;
+        }
+
     </style>
 </head>
 <body>
@@ -393,6 +454,16 @@
                         <input type="checkbox" id="comparisonModeCheckbox" />
                     </label>
                 </div>
+                <hr>
+                <div id="updateForm">
+                    <label for="companyNameInput">公司名：</label>
+                    <input type="text" id="companyNameInput" placeholder="输入公司名" />
+                    
+                    <label for="newRentInput">新的房租：</label>
+                    <input type="number" id="newRentInput" placeholder="输入新的房租" />
+            
+                    <button type="button" id="updateRentBtn">更新房租</button>
+                </div>
             </div>
 
             <thead>
@@ -422,6 +493,42 @@
     </div>
 
     <script>
+        // 统一更新房价
+        if(1){
+            // 获取表单和按钮
+            const updateRentBtn = document.getElementById("updateRentBtn");
+            const companyNameInput = document.getElementById("companyNameInput");
+            const newRentInput = document.getElementById("newRentInput");
+
+            // 添加事件监听器，点击“更新房租”按钮时触发
+            updateRentBtn.addEventListener("click", function() {
+                const companyName = companyNameInput.value.trim();
+                const newRent = parseFloat(newRentInput.value.trim());
+
+                // 检查输入是否合法
+                if (!companyName || isNaN(newRent)) {
+                    alert("请正确填写公司名和房租！");
+                    return;
+                }
+
+                // 获取当前职位数据
+                const positions = getPositions();
+
+                // 更新相应公司名职位的房租
+                const updatedPositions = positions.map(position => {
+                    if (position.positionCompany === companyName) {
+                        position.positionRentHouseCost = newRent;
+                    }
+                    return position;
+                });
+
+                // 保存更新后的数据到localStorage
+                savePositions(updatedPositions);
+
+                // 重新渲染职位列表
+                renderPositions();
+            });
+        }
         // 右上设置框
         if(1){
             // 获取元素
@@ -720,9 +827,7 @@
                             <td>${increasedRentCost}</td>  <!-- 增加房租 -->
                             <td>${position.positionTransportationTimePerDay}</td>  <!-- 通勤 -->
                             <td class="action-buttons">
-                                <button onclick="editPosition('${position.id}')">编辑</button>
-                                <button onclick="copyPosition('${position.id}')">复制</button>
-                                <button onclick="deletePosition('${position.id}')">删除</button>
+                                <button onclick="copyPosition('${position.id}', ${increasedRentCost})">复制</button>
                             </td>
                         `;
 
@@ -830,11 +935,17 @@
         }
 
         // 复制岗位功能
-        function copyPosition(id) {
+        function copyPosition(id, newRentCost = null) {
             const positions = getPositions();
             const positionToCopy = { ...positions.find(p => p.id === id) };
             positionToCopy.id = generateUniqueId();  // 复制时生成新的ID
             positionToCopy.positionInfo += ' - 副本';
+
+            // 如果有传入新的房租价格，则更新房租
+            if (newRentCost !== null) {
+                positionToCopy.positionRentHouseCost = newRentCost;
+            }
+
             positionToCopy.positonWorkFromHomeDaysPerMonth = positionToCopy.positonWorkFromHomeDaysPerMonth;
 
             positions.push(positionToCopy);
