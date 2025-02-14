@@ -15,8 +15,6 @@ https://position-comparation.pages.dev/
 鼠标悬浮在同一公司名的项时，这个公司的岗位都会被高亮
 当岗位有提供混合工作或纯线上的时候 “平均每天占用” 列可以显示
 ![image](https://github.com/user-attachments/assets/38f54069-c664-453d-9843-602a3c5c8dd2)
-可以输入自己目前岗位的幸福度，方便让系统给出推荐，输入后低于目前幸福度的岗位幸福度列为红，高于目前幸福度则为绿
-![image](https://github.com/user-attachments/assets/02740b06-b8ff-4fec-85ca-9d774ef1490c)
 
 2025/02/12 更新
 右上增加了一个固定的工具栏 点击右上角可以折叠
@@ -25,3 +23,6 @@ https://position-comparation.pages.dev/
 ![update](https://github.com/user-attachments/assets/28321495-abb4-4d93-8946-b8e75e900bb1)
 增加批量更改房租、因为大多数时候一家公司的不同岗位租房参考往往一样
 ![image](https://github.com/user-attachments/assets/8d87b4b3-e1b4-4b7d-8301-b0b38809429b)
+
+设置部分界面优化
+![image](https://github.com/user-attachments/assets/022dec49-1e54-4110-a702-0bfbe5ced810)
