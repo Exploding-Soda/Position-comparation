@@ -386,7 +386,7 @@
             <p><strong>时薪计算：</strong></p>
             <p>时薪 = (税后工资 - 每月交通费 - 房租) / 总工作时间（小时）</p>
             <p><strong>日薪计算：</strong></p>
-            <p>日薪 = 时薪 × (每天工作时间 + 每日通勤时间 / 60)</p>
+            <p>日薪 = 时薪 × (每天工作时间 + 每日来回总通勤时间 / 60)</p>
             <p><strong>幸福度计算：</strong></p>
             <p>根据每月的平均工作时长来计算每个职位的幸福度，幸福度的计算方式考虑了工作占用的时间与收入的关系。</p>
             <ul>
@@ -421,7 +421,7 @@
             <label for="positionTransportationCostsPerDay">每日交通费：</label>
             <input type="number" id="positionTransportationCostsPerDay" required><br><br>
         
-            <label for="positionTransportationTimePerDay">每日通勤时间（分钟）：</label>
+            <label for="positionTransportationTimePerDay">每日来回总通勤时间（分钟）：</label>
             <input type="number" id="positionTransportationTimePerDay" required><br><br>
         
             <label for="postionOnSiteHoursPerDay">每天工作时间（小时）：</label>
@@ -487,7 +487,7 @@
                     <th>平均每天占用（小时）</th>
                     <th>占时收入幸福度</th>
                     <th>房租(元)</th>
-                    <th>通勤(分)</th>
+                    <th>来回通勤(分)</th>
                     <th>操作</th>
                 </tr>
             </thead>
@@ -660,7 +660,7 @@
         function calculateDailyWage(position) {
             const hourlyWage = calculateHourlyWage(position);
 
-            // 计算日薪：时薪 * (每天工作时间 + 每日通勤时间（分钟） / 60)
+            // 计算日薪：时薪 * (每天工作时间 + 每日来回总通勤时间（分钟） / 60)
             const totalWorkHoursPerDay = position.postionOnSiteHoursPerDay + (position.positionTransportationTimePerDay / 60);
             return hourlyWage * totalWorkHoursPerDay;
         }
