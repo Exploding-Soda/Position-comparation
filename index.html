@@ -269,7 +269,7 @@
 
         /* 最小化按钮 */
         .toggle-btn {
-            background: none;
+            background: grey;
             border: none;
             font-size: 18px;
             cursor: pointer;
@@ -365,7 +365,11 @@
             border: 0;
             border-top: 1px solid #ddd;
         }
-
+        .settingOptions{
+            border: 1px solid black;
+            padding: 10px;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
@@ -441,7 +445,7 @@
 
         <h3>职位列表</h3>
         <table id="positions-table">
-            <input id="currentHappiness" type="number" placeholder="当前职位幸福度（输入数字）">
+            <input id="currentHappiness" type="number" placeholder="当前职位幸福度（输入数字）" style="display:none">
             <!-- 设置框 -->
             <div id="settingsBox" class="settings-box">
                 <div class="settings-header">
@@ -449,21 +453,27 @@
                     <button id="toggleSettingsBtn" class="toggle-btn">-</button>
                 </div>
                 <div id="settingsContent" class="settings-content">
-                    <label for="comparisonModeCheckbox">
-                        假设房租上涨100-1000的情况
-                        <input type="checkbox" id="comparisonModeCheckbox" />
-                    </label>
+                    <div class='settingOptions'>
+                        <label for="comparisonModeCheckbox">
+                            <input type="checkbox" id="comparisonModeCheckbox" />
+                            假设现有职位房租上涨100-1000的情况 
+                        </label>
+                    </div>
+                    <hr>
+                    <div class='settingOptions'>
+                        <h3>批量更新对应公司的房租</h3>
+                        <div id="updateForm">
+                            <label for="companyNameInput">公司名：</label>
+                            <input type="text" id="companyNameInput" placeholder="输入公司名" />
+                            
+                            <label for="newRentInput">新的房租：</label>
+                            <input type="number" id="newRentInput" placeholder="输入新的房租" />
+                    
+                            <button type="button" id="updateRentBtn">更新房租</button>
+                        </div>
+                    </div>
                 </div>
                 <hr>
-                <div id="updateForm">
-                    <label for="companyNameInput">公司名：</label>
-                    <input type="text" id="companyNameInput" placeholder="输入公司名" />
-                    
-                    <label for="newRentInput">新的房租：</label>
-                    <input type="number" id="newRentInput" placeholder="输入新的房租" />
-            
-                    <button type="button" id="updateRentBtn">更新房租</button>
-                </div>
             </div>
 
             <thead>
