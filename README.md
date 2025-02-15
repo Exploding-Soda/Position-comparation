@@ -26,3 +26,6 @@ https://position-comparation.pages.dev/
 
 设置部分界面优化
 ![image](https://github.com/user-attachments/assets/022dec49-1e54-4110-a702-0bfbe5ced810)
+
+如果存在一周5天以上的工作，会额外计算幸福度，并且会红色感叹号警告
+![image](https://github.com/user-attachments/assets/e38f6138-b457-4af4-a465-82f8c06c8fbf)
