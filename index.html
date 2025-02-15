@@ -216,6 +216,13 @@
             margin-left: 5px;
         }
 
+        .overwork-icon {
+            color: red;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
         .home-icon:hover {
             color: green;
             text-decoration: underline;
@@ -429,6 +436,15 @@
             <button id="closeTip" class="close-button">&times;</button>
         </div>
         <a href="https://github.com/Exploding-Soda/Position-comparation" style="text-decoration: underline; color: inherit;">随时保持更新 - GitHub项目地址</a>
+        <hr>
+        <div>
+            <strong>更新记录 2025-02-15</strong>
+            <ul>
+                <li>改进算法，一周5天以上的班会额外影响幸福度，计算方法在以下内容说明</li>
+                <li>如果岗位存在一周5天以上的情况，“平均每天占用”列会多一个红色感叹号</li>
+            </ul>
+        </div>
+        <hr>
         <div class="tip-content">
             <p><strong>时薪计算：</strong></p>
             <p>时薪 = (税后工资 - 每月交通费 - 房租) / 总工作时间（小时）</p>
@@ -438,6 +454,7 @@
             <p>根据每月的平均工作时长来计算每个职位的幸福度，幸福度的计算方式考虑了工作占用的时间与收入的关系。</p>
             <ul>
                 <li><strong>工作占用时间：</strong>工作占用时间包括了每天的工作时长以及通勤时间。平均工作时间越短，幸福度越高。</li>
+                <li><strong>一周5天以上：</strong>会把多出来的天数的工作时间均摊到5天内，然后再做幸福度计算。</li>
                 <li><strong>惩罚机制：</strong>当平均工作时长超过 9 小时时，开始惩罚，超过 12 小时时惩罚达到巅峰。惩罚是线性增长的，即每小时的工作时间增加会导致幸福度下降。</li>
                 <li><strong>奖励机制：</strong>当平均工作时长小于 9 小时时，会给予一定的奖励，意味着工作时间越少，幸福度会有所提升。</li>
             </ul>
@@ -760,7 +777,11 @@
                 const totalOccupiedTime = workFromHomeOccupiedTime + onSiteOccupiedTime;
 
                 // 计算平均占用时间
+                // 只能得出每天工作几小时
                 const averageOccupiedTime = totalOccupiedTime / position.positionWorkDaysPerMonth;
+
+                const averageOccupiedTimePerDay = (totalOccupiedTime / 21).toFixed(1);
+                // console.log(`总占用 ${averageOccupiedTimePerDay} = ${totalOccupiedTime} / ${position.positionWorkDaysPerMonth}`)
 
                 // 设置参数
                 const scalingFactor = 600;  // 惩罚的强度，数值越小惩罚越强
@@ -771,29 +792,28 @@
                 // 计算惩罚因子
                 let penalty = 0;
 
-                if (averageOccupiedTime > 9 && averageOccupiedTime <= 10) {
-                    penalty = (averageOccupiedTime - 9) * 0.25;  // 9-10小时之间的惩罚
-                } else if (averageOccupiedTime > 10 && averageOccupiedTime <= 11) {
-                    penalty = (averageOccupiedTime - 10) * 0.1 + 0.25;  // 10-11小时之间的惩罚
-                } else if (averageOccupiedTime > 11 && averageOccupiedTime <= 12) {
-                    penalty = (averageOccupiedTime - 11) * 0.35 + 0.25;  // 11-12小时之间的惩罚
+                if (averageOccupiedTimePerDay > 9 && averageOccupiedTimePerDay <= 10) {
+                    penalty = (averageOccupiedTimePerDay - 9) * 0.25;  // 9-10小时之间的惩罚
+                } else if (averageOccupiedTimePerDay > 10 && averageOccupiedTime <= 11) {
+                    penalty = (averageOccupiedTimePerDay - 10) * 0.1 + 0.25;  // 10-11小时之间的惩罚
+                } else if (averageOccupiedTimePerDay > 11 && averageOccupiedTimePerDay <= 12) {
+                    penalty = (averageOccupiedTimePerDay - 11) * 0.35 + 0.25;  // 11-12小时之间的惩罚
                 }
 
                 happinessFactor = Math.max(0, (monthlyIncome / 10000) * (1 - penalty));  // 确保幸福度不低于0
 
                 const happinessFactorFormatted = happinessFactor.toFixed(2);  // 保留两位小数
-                const workFromHomeTooltip = workFromHomeDays > 0 ? `该岗位能够居家办公 ${workFromHomeDays} 天` : '';
 
                 // 渲染职位的原始行
                 const row = tableBody.insertRow();
                 
                 // 判断平均占用时间，并根据值设置颜色
                 let averageOccupiedTimeClass = '';
-                if (averageOccupiedTime < 9) {
+                if (averageOccupiedTimePerDay < 9) {
                     averageOccupiedTimeClass = 'green'; // 9以下，绿色
-                } else if (averageOccupiedTime >= 9 && averageOccupiedTime < 9.5) {
+                } else if (averageOccupiedTimePerDay >= 9 && averageOccupiedTimePerDay < 9.5) {
                     averageOccupiedTimeClass = 'black'; // 9到9.5之间，黑色
-                } else if (averageOccupiedTime >= 9.5 && averageOccupiedTime < 10) {
+                } else if (averageOccupiedTimePerDay >= 9.5 && averageOccupiedTimePerDay < 10) {
                     averageOccupiedTimeClass = 'orange'; // 9.5到10之间，橙色
                 } else {
                     averageOccupiedTimeClass = 'red'; // 10以上，红色
@@ -804,9 +824,13 @@
                 workFromHomePerWeek = workFromHomePerWeek.toFixed(1);  // 保留1位小数
 
                 // 如果居家天数与工作天数不一致，显示感叹号并添加提示
-                const workFromHomeIcon = (workFromHomeDays !== onSiteWorkDays && workFromHomePerWeek > 0) ? 
+                let extraExclamation = (workFromHomeDays !== onSiteWorkDays && workFromHomePerWeek > 0) ? 
                     `<span class="home-icon" title="该岗位每周大约可居家办公 ${workFromHomePerWeek} 天">!</span>` : '';
 
+                // 如果存在不是做5休2的情况
+                if(position.positionWorkDaysPerMonth>22){
+                    extraExclamation +=  `<span class="overwork-icon" title="一周工作5天以上，按5天换算相当于一天工作 ${averageOccupiedTimePerDay} 小时">!</span>`;
+                }
                 // 检查幸福度，并根据当前幸福度输入框的值为幸福度列设置颜色
                 let happinessClass = '';
                 if(currentHappinessValue == 0){
@@ -826,7 +850,7 @@
                     <td>${hourlyWage.toFixed(2)}</td>
                     <td>${dailyWage.toFixed(2)}</td>
                     <td>${monthlyIncome.toFixed(2)}</td>  <!-- 每月到手收入 -->
-                    <td class="${averageOccupiedTimeClass}">${isNaN(averageOccupiedTime) ? 'N/A' : averageOccupiedTime.toFixed(2)} ${workFromHomeIcon}</td>  <!-- 平均每天占用 -->
+                    <td class="${averageOccupiedTimeClass}">${isNaN(averageOccupiedTime) ? 'N/A' : averageOccupiedTime.toFixed(2)} ${extraExclamation}</td>  <!-- 平均每天占用 -->
                     <td class="${happinessClass}">${happinessFactorFormatted}</td>  <!-- 占时收入幸福度 -->
                     <td>${position.positionRentHouseCost}</td>  <!-- 房租 -->
                     <td>${position.positionTransportationTimePerDay}</td>  <!-- 通勤 -->
@@ -884,7 +908,7 @@
                             <td>${assumedHourlyWage.toFixed(2)}</td>
                             <td>${assumedDailyWage.toFixed(2)}</td>
                             <td>${assumedMonthlyIncome.toFixed(2)}</td>  <!-- 每月到手收入 -->
-                            <td class="${averageOccupiedTimeClass}">${isNaN(averageOccupiedTime) ? 'N/A' : averageOccupiedTime.toFixed(2)} ${workFromHomeIcon}</td>
+                            <td class="${averageOccupiedTimeClass}">${isNaN(averageOccupiedTime) ? 'N/A' : averageOccupiedTime.toFixed(2)} ${extraExclamation}</td>
                             <td class="${happinessClass}">${assumedHappinessFactorFormatted}</td>  <!-- 假定幸福度 -->
                             <td>${increasedRentCost}</td>  <!-- 增加房租 -->
                             <td>${position.positionTransportationTimePerDay}</td>  <!-- 通勤 -->
