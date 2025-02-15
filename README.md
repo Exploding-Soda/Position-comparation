@@ -24,8 +24,5 @@ https://position-comparation.pages.dev/
 增加批量更改房租、因为大多数时候一家公司的不同岗位租房参考往往一样
 ![image](https://github.com/user-attachments/assets/8d87b4b3-e1b4-4b7d-8301-b0b38809429b)
 
-2025/02/13 更新设置部分界面优化
-![image](https://github.com/user-attachments/assets/022dec49-1e54-4110-a702-0bfbe5ced810)
-
 2025/02/15 如果存在一周5天以上的工作，会额外计算幸福度，并且会红色感叹号警告
 ![image](https://github.com/user-attachments/assets/e38f6138-b457-4af4-a465-82f8c06c8fbf)
